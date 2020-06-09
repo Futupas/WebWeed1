@@ -58,12 +58,17 @@ div.axial{
     position: fixed;
     z-index: 1000;
     /* background-color: rgba(0, 0, 0, .2); */
-    top: 100px;
-    left: 100px;
-    transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(0deg) rotateZ(25deg);
+    /* top: 100px; */
+    /* left: 100px; */
+    /* transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(0deg) rotateZ(25deg); */
     transform-style: preserve-3d;
     backface-visibility: visible;
     animation: opacityComing 2s linear 0s 1;
+}
+
+div.axial.remove{
+    animation: none;
+    transition: transform 1s ease-in;
 }
 
 div.planet {

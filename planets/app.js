@@ -1,5 +1,46 @@
 'use strict';
 
+const PX_TO_STOP = -1000;
+let stoppedPlanets = [];
+let stopped = false;
+
+function setStopped(newStopped) {
+    if (newStopped) {
+        stopped = true;
+    } else {
+        stopped = false;
+        for(let i = 0; i < stoppedPlanets.length; i-=-1) {
+            stoppedPlanets[i].classList.add('remove');
+            stoppedPlanets[i].style.transform = 
+                'translate3d(0px, ' +
+                '1000vh' + 
+                ', ' + 
+                stoppedPlanets[i].data.zCoord + 
+                'px) rotateX(0deg) rotateY(0deg) rotateZ(' + 
+                stoppedPlanets[i].data.angle + 
+                'deg)';
+
+            setTimeout((planet) => {
+                planet.remove();
+            }, 3000, stoppedPlanets[i])
+        }
+        stoppedPlanets = [];
+    }
+}
+
+window.onkeydown = function(e) {
+    setStopped(true);
+}
+window.onkeyup = function(e) {
+    setStopped(false);
+}
+window.onmousedown = function(e) {
+    setStopped(true);
+}
+window.onmouseup = function(e) {
+    setStopped(false);
+}
+
 let COLORS = [
     '#ff0000',
     '#00ff00',
@@ -74,6 +115,11 @@ function buildPlanets(quantity, timeout, updateFrequency) {
             //     let blur = map(zCoord, -2000, 500, 0, 10);
             //     planet.style.filter = 'blur('+blur+'px)';
             // }
+
+            if (stopped && zCoord >= PX_TO_STOP) {
+                stoppedPlanets.push(planet);
+                clearInterval(planetInterval);
+            }
 
             if (zCoord >= 500) {
                 planet.remove();
