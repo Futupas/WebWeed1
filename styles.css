@@ -1,0 +1,189 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+div#scroll{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 300vh;
+    background-color: transparent;
+
+}
+
+div#logo{
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    height: 20vh;
+    top: 40vh;
+    background-color: #000;
+    left: 0px;
+    z-index: 10;
+    transform-origin: center center;
+    opacity: 1;
+    transition: transform 3s ease-out, opacity 3s ease-in;
+    transform: scaleX(1);
+}
+div#logo.hide{
+    transform: scaleX(5);
+    opacity: 0;
+}
+
+div#logo > div.letter{
+    display: inline-block;
+    font-size: 15vh;
+    line-height: 20vh;
+    font-weight: bold;
+    color: #f00;
+
+}
+
+div#logo > div.letter.rotating{
+    position: relative;
+    animation: rotating .2s linear 0s infinite;
+}
+
+div#doors.hide{
+    z-index:2;
+    opacity: 0;
+}
+div#doors{
+    position: fixed;
+    display: block;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100vh;
+    background-color: #f00;
+    perspective: 1000px;
+    z-index:5;
+    opacity: 1;
+}
+
+#doors > div {
+    position: fixed;
+    top: 0px;
+    height: 100vh;
+    width: 50%;
+    background-color: #fff;
+    transition: transform 5s linear;
+    transform: rotateY(0deg);
+}
+#doors > div.left{
+    left: 0px;
+    transform-origin: left center;
+    transform: rotateY(180deg);
+}
+#doors > div.left.rotated{
+    transform: rotateY(180deg);
+}
+#doors > div.right{
+    right: 0px;
+    transform-origin: right center;
+    transform: rotateY(-180deg);
+}
+#doors > div > div.stripe {
+    position: absolute;
+    top: 40vh;
+    left: 0px;
+    height: 20vh;
+    width: 100%;
+    background-color: #000;
+}
+
+#doors.hide > div {
+    transform: rotateY(0deg);
+}
+
+@keyframes rotating{
+    0%{
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+
+}
+
+@keyframes rotatingX{
+    0%{
+        transform: rotateX(0deg);
+    }
+    50%{
+        transform: rotateX(180deg);
+    }
+    100%{
+        transform: rotateX(360deg);
+    }
+
+}
+@keyframes rotatingY{
+    0%{
+        transform: rotateY(0deg);
+    }
+    50%{
+        transform: rotateY(180deg);
+    }
+    100%{
+        transform: rotateY(360deg);
+    }
+
+}
+@keyframes rotatingZ{
+    0%{
+        transform: rotateZ(0deg);
+    }
+    50%{
+        transform: rotateZ(180deg);
+    }
+    100%{
+        transform: rotateZ(360deg);
+    }
+
+}
+
+div.axial{
+    position: fixed;
+    z-index: 1000;
+    /* background-color: rgba(0, 0, 0, .2); */
+    top: 100px;
+    left: 100px;
+    transform: rotateZ(50deg);
+    transform: translate3d(0px, 0px, -300px) rotateX(0deg) rotateY(0deg) rotateZ(25deg);
+    transform-style: preserve-3d;
+    backface-visibility: visible;
+}
+
+div.planet {
+    position: absolute;
+    /* background-color: rgba(255, 0, 0, .2); */
+    top: 0px;
+    left: 0px;
+    transform: rotateZ(50deg);
+    transform: translate3d(0px, 0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    transform-style: preserve-3d;
+    backface-visibility: visible;
+    animation: rotatingY 1s linear 0s infinite;
+}
+
+div.planetcircle{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    /* background-color: rgba(0, 255, 0, 1); */
+    transform-origin: center center;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    border: 3px solid black;
+}
+
+div#planetscontainer{
+    perspective: 1000px;
+}
