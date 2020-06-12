@@ -2,8 +2,13 @@
 const SVGNS = 'http://www.w3.org/2000/svg';
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
-let fieldSegments = [];
+const FIELD_RADIUS = 200;
 
+/** @type {Array<LineSegment>} */
+let fieldSegments = [];
+/** @type {Array<LineSegment>} */
+let figureSegments = [];
+let path;
 
 class LineSegment {
     x1 = 0;
@@ -43,41 +48,216 @@ class LineSegment {
         line.style.strokeWidth = strokeWidth;
         svg.appendChild(line);
         this.element = line;
+        line.style.strokeLinecap = 'round';
         return line;
     }
+
+    /**
+     * gets coordinates of intersection of this line and lineSegment
+     * @param {LineSegment} lineSegment  second line to intersect this
+     * @returns {Array<number>|boolean} array [x, y] with coords of intersection or false if lines do not intersect
+     */
+    getCoordsOfIntersection(lineSegment) {
+        let vertical1 = false;
+        let vertical2 = false;
+        // A1*x + B1*y + C1 = 0   =>   this
+        let A1 = this.y1 - this.y2;
+        let B1 = this.x2 - this.x1;
+        let C1 = this.x1 * this.y2 - this.x2 * this.y1;
+        // y = k1*x + b1          =>   this
+        let k1;
+        let b1;
+        if (Math.round(B1 * 100000) == 0) {
+            vertical1 = true;
+        } else {
+            k1 = -1 * A1 / B1;
+            b1 = -1 * C1 / B1;
+        }
+
+        // A2*x + B2*y + C2 = 0   =>   lineSegment
+        let A2 = lineSegment.y1 - lineSegment.y2;
+        let B2 = lineSegment.x2 - lineSegment.x1;
+        let C2 = lineSegment.x1 * lineSegment.y2 - lineSegment.x2 * lineSegment.y1;
+        // y = k2*x + b2          =>   lineSegment
+        let k2;
+        let b2;
+        if (Math.round(B2 * 100000) == 0) {
+            vertical2 = true;
+        } else {
+            k2 = -1 * A2 / B2;
+            b2 = -1 * C2 / B2;
+        }
+
+
+        console.log(`A1: ${A1}, B1: ${B1}, C1: ${C1}, k1: ${k1}, b1: ${b1}`);
+        console.log(`A2: ${A2}, B2: ${B2}, C2: ${C2}, k2: ${k2}, b2: ${b2}`);
+
+        if (k1 === k2) return false; // segments are parallel
+
+        let intersectionX;
+        let intersectionY;
+
+        if (!vertical1 && !vertical2) {
+            intersectionX = (b2 - b1) / (k1 - k2);
+            intersectionY = k1 * intersectionX + b1;
+        } else if (vertical1 && !vertical2) {
+            intersectionX = -1 * C1 / A1;
+            intersectionY = k2 * intersectionX + b2;
+        } else if (!vertical1 && vertical2) {
+            intersectionX = -1 * C2 / A2;
+            intersectionY = k1 * intersectionX + b1;
+        } else {
+            return false;
+        }
+
+        if (intersectionX < Math.min(this.x1, this.x2) ||
+            intersectionX > Math.max(this.x1, this.x2) ||
+            intersectionX < Math.min(lineSegment.x1, lineSegment.x2) ||
+            intersectionX > Math.max(lineSegment.x1, lineSegment.x2) ||
+            intersectionY < Math.min(this.y1, this.y2) ||
+            intersectionY > Math.max(this.y1, this.y2) ||
+            intersectionY < Math.min(lineSegment.y1, lineSegment.y2) ||
+            intersectionY > Math.max(lineSegment.y1, lineSegment.y2)) {
+                // console.log(`intersectionX: ${intersectionX}, intersectionY: ${intersectionY}\n this.x1: ${this.x1}, this.x2: ${this.x2}, this.y1: ${this.y1}, this.y2: ${this.y2}\n lineSegment.x1: ${lineSegment.x1}, lineSegment.x2: ${lineSegment.x2}, lineSegment.y1: ${lineSegment.y1}, lineSegment.y2: ${lineSegment.y2}`);
+                // console.log(lineSegment.element);
+                // console.log(this.element);
+                // console.log(intersectionX < Math.min(this.x1, this.x2));
+                // console.log(intersectionX > Math.max(this.x1, this.x2));
+                // console.log(intersectionX < Math.min(lineSegment.x1, lineSegment.x2));
+                // console.log(intersectionX > Math.max(lineSegment.x1, lineSegment.x2));
+                // console.log(intersectionY < Math.min(this.y1, this.y2));
+                // console.log(intersectionY > Math.max(this.y1, this.y2));
+                // console.log(intersectionY < Math.min(lineSegment.y1, lineSegment.y2));
+                // console.log(intersectionY > Math.max(lineSegment.y1, lineSegment.y2));
+                // console.log('------');
+                return false;
+            } 
+        
+        return [intersectionX, intersectionY];
+    }
+
 
 }
 
 
-// let line1 = new LineSegment(10, 10, 100, 100);
-// line1.draw(document.getElementById('mainsvg'), '#f00', '5px');
-drawField(document.getElementById('mainsvg'), 13, 200, '#000', '5px');
 
 
 /**
  * draws a field with n (quantityOfSides) sides
  * @param {HTMLElement} svg svg element, where to draw the line
  * @param {number} quantityOfSides quantity of sIdes
- * @param {number} radius radius of circle, drawed over the polygon
  * @param {String} strokeColor color of line
  * @param {String} strokeWidth color of line
  */
-function drawField(svg, quantityOfSides, radius, strokeColor, strokeWidth) {
-    let prevXCoord = radius*Math.cos(0);
-    let prevYCoord = radius*Math.sin(0);
+function drawField(svg, quantityOfSides, strokeColor, strokeWidth) {
+    let prevXCoord = FIELD_RADIUS*Math.cos(0);
+    let prevYCoord = FIELD_RADIUS*Math.sin(0);
     fieldSegments = [];
     for (let i = 1; i < quantityOfSides; i-=-1) {
         let angle = 2*Math.PI/quantityOfSides*i;
-        let xCoord = radius*Math.cos(angle);
-        let yCoord = radius*Math.sin(angle);
+        let xCoord = FIELD_RADIUS*Math.cos(angle);
+        let yCoord = FIELD_RADIUS*Math.sin(angle);
         let line = new LineSegment(prevXCoord, prevYCoord, xCoord, yCoord);
         prevXCoord = xCoord;
         prevYCoord = yCoord;
         fieldSegments.push(line);
-        line.draw(svg, strokeColor, strokeWidth).style.strokeLinecap = 'round';
+        line.draw(svg, strokeColor, strokeWidth);
     }
-    let line = new LineSegment(prevXCoord, prevYCoord, radius*Math.cos(0), radius*Math.sin(0));
+    let line = new LineSegment(prevXCoord, prevYCoord, FIELD_RADIUS*Math.cos(0), FIELD_RADIUS*Math.sin(0));
     fieldSegments.push(line);
-    line.draw(svg, strokeColor, strokeWidth).style.strokeLinecap = 'round';
+    line.draw(svg, strokeColor, strokeWidth);
 
 }
+
+
+/**
+ * @param {number} x start x cordinate
+ * @param {number} y start y cordinate
+ * @param {number} angle start x angle in radians
+ * @returns {Array<number>} [x, y, angle] of next segment
+ */
+function drawAPathSegment(x, y, angle) {
+    angle  = angle % (2*Math.PI);
+    let closestIntersection = false;
+    let fieldIntersects = false;
+    let ray = new LineSegment(x, y, x+3*FIELD_RADIUS*Math.cos(angle), y+3*FIELD_RADIUS*Math.sin(angle));
+    ray.draw(document.getElementById('mainsvg'), '#0f0', '1px');
+    for (let i = 0; i < fieldSegments.length; i-=-1) {
+        let intersection = fieldSegments[i].getCoordsOfIntersection(ray);
+        console.log(`drawAPathSegment: intersection: ${intersection}`);
+        console.log(fieldSegments[i]);
+        console.log(ray);
+        if (intersection !== false) {
+            let r = Math.sqrt(Math.pow(x - intersection[0], 2) + Math.pow(y - intersection[1], 2));
+            console.log('r: '+r);
+            // if (closestIntersection === false) {
+            if (r > 0) {
+                closestIntersection = intersection;
+                fieldIntersects = fieldSegments[i];
+            }
+            // else {
+            //     let closestR = Math.sqrt(Math.pow(x - closestIntersection[0], 2) + Math.pow(y - closestIntersection[1], 2));
+            //     let r = Math.sqrt(Math.pow(x - intersection[0], 2) + Math.pow(y - intersection[1], 2));
+            //     // console.log(r);
+            //     if (r < closestR && r !== 0) {
+            //         closestIntersection = intersection;
+            //         fieldIntersects = fieldSegments[i];
+            //     } 
+            // }
+        }
+    }
+
+    console.log(fieldIntersects);
+    let segmentAngle = Math.atan2(fieldIntersects.y2 - fieldIntersects.y1, fieldIntersects.x2 - fieldIntersects.x1);
+    console.log('segment angle: '+segmentAngle);
+
+    let newAngle = Math.PI - ((angle - Math.PI - 2*segmentAngle) % (2*Math.PI));
+    console.log('new angle: '+newAngle);
+
+    return [closestIntersection[0], closestIntersection[1], newAngle];
+}
+
+/**
+ * 
+ * @param {HTMLElement} svg 
+ * @param {number} quantityOfSegments 
+ * @param {number} startX 
+ * @param {number} staryY 
+ * @param {number} startAngle 
+ * @param {String} strokeColor 
+ * @param {String} strokeWidth 
+ */
+function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeColor, strokeWidth) {
+    let x = startX;
+    let y = staryY;
+    let angle = startAngle % (2*Math.PI);
+    for (let i = 0; i < quantityOfSegments; i-=-1) {
+        console.log(`iteration ${i}: x=${x}, y=${y}, angle=${angle}`);
+        let newSegments = drawAPathSegment(x, y, angle);
+        console.log(newSegments);
+        let line = new LineSegment(x, y, newSegments[0], newSegments[1]);
+        line.draw(svg, strokeColor, strokeWidth);
+        x = newSegments[0];
+        y = newSegments[1];
+        angle = newSegments[2] % (2*Math.PI);
+        console.log('\n\n\n\n');
+    } 
+}
+
+
+
+
+
+
+
+
+
+drawField(document.getElementById('mainsvg'), 13, '#000', '5px');
+drawPath(document.getElementById('mainsvg'), 5, 0, 0, .1*Math.PI, '#f00', '5px');
+
+
+// let line1 = new LineSegment(-194.18836348521037, 47.86313285751162, -194.18836348521043, -47.86313285751149);
+// line1.draw(mainsvg, '#000', '5px');
+// let line2 = new LineSegment(185.17052372868466, 60.16555032121232, -406.2651248303058, -40.848674487011024);
+// line2.draw(mainsvg, '#0f0', '1px');
+// console.log(line1.getCoordsOfIntersection(line2));
