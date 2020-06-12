@@ -89,23 +89,28 @@ class LineSegment {
             b2 = -1 * C2 / B2;
         }
 
-        if (k1 === k2) return false; // segments are parallel
-
         let intersectionX;
         let intersectionY;
+
+        // console.log(`A1: ${A1}, B1: ${B1}, C1: ${C1}, k1: ${k1}, b1: ${b1}`);
+        // console.log(`A2: ${A2}, B2: ${B2}, C2: ${C2}, k2: ${k2}, b2: ${b2}`);
 
         if (!vertical1 && !vertical2) {
             intersectionX = (b2 - b1) / (k1 - k2);
             intersectionY = k1 * intersectionX + b1;
         } else if (vertical1 && !vertical2) {
-            intersectionX = -1 * C1 / A1;
+            intersectionX = (this.x1 + this.x2) / 2;
+            // intersectionX = -1 * C1 / A1;
             intersectionY = k2 * intersectionX + b2;
         } else if (!vertical1 && vertical2) {
-            intersectionX = -1 * C2 / A2;
+            intersectionX = (lineSegment.x1 + lineSegment.x2) / 2;
+            // intersectionX = -1 * C2 / A2;
             intersectionY = k1 * intersectionX + b1;
         } else {
             return false;
         }
+        
+        if (k1 === k2) return false; // segments are parallel
 
         if (intersectionX < Math.min(this.x1, this.x2) ||
             intersectionX > Math.max(this.x1, this.x2) ||
@@ -196,6 +201,7 @@ function drawAPathSegment(x, y, angle) {
  * @param {String} strokeWidth 
  */
 function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeColor, strokeWidth) {
+    figureSegments = [];
     let x = startX;
     let y = staryY;
     let angle = startAngle % (2*Math.PI);
@@ -203,6 +209,7 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
         let newSegments = drawAPathSegment(x, y, angle);
         let line = new LineSegment(x, y, newSegments[0], newSegments[1]);
         line.draw(svg, strokeColor, strokeWidth);
+        figureSegments.push(line);
         x = newSegments[0];
         y = newSegments[1];
         angle = newSegments[2] % (2*Math.PI);
@@ -210,19 +217,24 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
 }
 
 
+let currentNumber = 3;
 
 
-
-
-
-
-
-drawField(document.getElementById('mainsvg'), 3, '#000', '5px');
+drawField(document.getElementById('mainsvg'), currentNumber, '#000', '5px');
 drawPath(document.getElementById('mainsvg'), 100, 0, 0, .1*Math.PI, '#f00', '1px');
 
+window.onkeydown = function(e) {
+    if (e.key == 'ArrowLeft') currentNumber --;
+    else currentNumber -=- 1;
+    this.console.log(currentNumber);
+    mainsvg.innerHTML = '';
+    drawField(document.getElementById('mainsvg'), currentNumber, '#000', '5px');
+    drawPath(document.getElementById('mainsvg'), 100, 0, 0, .1*Math.PI, '#f00', '1px');
+}
 
-// let line1 = new LineSegment(-194.18836348521037, 47.86313285751162, -194.18836348521043, -47.86313285751149);
+
+// let line1 = new LineSegment(-180.19377358048382, 86.77674782351164, -180.19377358048382, -86.7767478235116);
 // line1.draw(mainsvg, '#000', '5px');
-// let line2 = new LineSegment(185.17052372868466, 60.16555032121232, -406.2651248303058, -40.848674487011024);
+// let line2 = new LineSegment(-31.964374447409337, -192.12345209880309, -339.70394089095254, 322.9458240623169);
 // line2.draw(mainsvg, '#0f0', '1px');
 // console.log(line1.getCoordsOfIntersection(line2));
