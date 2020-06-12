@@ -104,17 +104,11 @@ function buildPlanets(quantity, timeout, updateFrequency) {
             speed: speed,
             angle: angle
         };
-        // setTimeout(() => {
-        //     planet.remove();
-        // }, (2000-zCoord)/speed *1000);
+        
         let planetInterval = setInterval(() => {
             let delta = speed / updateFrequency;
             zCoord += delta;
             planet.style.transform = 'translate3d(0px, 0px, '+zCoord+'px) rotateX(0deg) rotateY(0deg) rotateZ('+angle+'deg)';
-            // if (zCoord >= -2000) {
-            //     let blur = map(zCoord, -2000, 500, 0, 10);
-            //     planet.style.filter = 'blur('+blur+'px)';
-            // }
 
             if (stopped && zCoord >= PX_TO_STOP) {
                 stoppedPlanets.push(planet);
@@ -140,8 +134,6 @@ function map(num, frombottom, fromtop, tobottom, totop) {
 }
 
 
-
-// buildAPlanet(100, 'rgba(0, 255, 0, 1)', 12);
 
 function buildAPlanet(radius, color, quantity) {
     window.planetData = {
@@ -196,14 +188,4 @@ function buildAPlanet(radius, color, quantity) {
     }
 
     return axial;
-}
-
-
-
-window.onmousemove = function (e) {
-    if (e.buttons == 1 && false) {
-        window.planetData.x = (window.planetData.x - e.movementY) % 360;
-        window.planetData.y = (window.planetData.y + e.movementX) % 360;
-        document.querySelector('.axial').style.transform = 'translate3d(0px, 0px, -300px) rotateX('+window.planetData.x+'deg) rotateY('+window.planetData.y+'deg) rotateZ(0deg)'
-    }
 }
