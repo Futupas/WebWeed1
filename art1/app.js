@@ -5,13 +5,26 @@ const CANVAS_HEIGHT = 500;
 const FIELD_RADIUS = 200;
 const ACCURACY = 1000 * 1000 * 1000;
 
+
+let color = 0;
+const COLORS = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff'];
+
+
 /** @type {Array<LineSegment>} */
 let fieldSegments = [];
 /** @type {Array<LineSegment>} */
 let figureSegments = [];
 /** @type {Array<LineSegment>} */
 let raySegments = [];
+
+
+/** @type {HTMLElement} */
 let path;
+/** @type {Array<HTMLElement>} */
+let pathes = [];
+/** @type {Array<LineSegment>} */
+// let currentSegments = [];
+
 
 class LineSegment {
     x1 = 0;
@@ -231,19 +244,60 @@ function drawAPathSegment(x, y, angle) {
  */
 function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeColor, strokeWidth) {
     figureSegments = [];
+    let currentSegments = [];
+    pathes = [];
+    path = document.createElementNS(SVGNS, 'path');
+    path.style.stroke = strokeColor;
+    path.style.strokeWidth = strokeWidth;
+    path.style.fill = 'none';
+    pathes.push('patch');
+    svg.appendChild(path);
     let x = startX;
     let y = staryY;
     let angle = startAngle % (2*Math.PI);
+    path.setAttribute('d', `M${x+CANVAS_WIDTH/2} ${CANVAS_HEIGHT/2-y} `);
     for (let i = 0; i < quantityOfSegments; i-=-1) {
-        let newSegments = drawAPathSegment(x, y, angle);
-        let line = new LineSegment(x, y, newSegments[0], newSegments[1]);
-        line.draw(svg, strokeColor, strokeWidth);
+        let newSegment = drawAPathSegment(x, y, angle);
+        let line = new LineSegment(x, y, newSegment[0], newSegment[1]);
+        
+
+        for(let ci = 0; ci < currentSegments.length-1; ci-=-1) {
+            let intersection = line.getCoordsOfIntersection(currentSegments[ci]);
+            // console.log(currentSegments.length);
+            if (intersection !== false) {
+                // console.log(intersection);
+                for (let j = 0; j < currentSegments.length; j-=-1) {
+                    // currentSegments[j].draw(mainsvg, '#00f', '1px');
+                }
+                // console.log(currentSegments);
+                line = new LineSegment(x, y, intersection[0], intersection[1]);
+                currentSegments.push(line);
+                figureSegments.push(line);
+                x = intersection[0];
+                y = intersection[1];
+                path.setAttribute('d', path.getAttribute('d')+`L${x+CANVAS_WIDTH/2} ${CANVAS_HEIGHT/2-y} `);
+                // angle = newSegment[2] % (2*Math.PI);
+                
+                color++;
+                console.log(color);
+                console.log(COLORS[color]);
+                drawPath(svg, quantityOfSegments-i, x, y, angle, COLORS[color], strokeWidth);
+
+                return;
+            }
+        }
+        
+        currentSegments.push(line);
         figureSegments.push(line);
-        x = newSegments[0];
-        y = newSegments[1];
-        angle = newSegments[2] % (2*Math.PI);
+        x = newSegment[0];
+        y = newSegment[1];
+        path.setAttribute('d', path.getAttribute('d')+`L${x+CANVAS_WIDTH/2} ${CANVAS_HEIGHT/2-y} `);
+        angle = newSegment[2] % (2*Math.PI);
     } 
 }
+
+
+
 
 
 let currentNumber = 0;
@@ -253,10 +307,25 @@ drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
 drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
 
 window.onkeydown = function(e) {
+    color = 0;
     if (e.key == 'ArrowLeft') currentNumber -= 2*Math.PI/360 / 3;
     else currentNumber += 2*Math.PI/360 / 3;
-    this.console.log(currentNumber);
+    // this.console.log(currentNumber);
     mainsvg.innerHTML = '';
     drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
     drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
+}
+
+
+function drawPoint(x, y) {
+    let rx = x+CANVAS_WIDTH/2;
+    let ry = CANVAS_HEIGHT/2-y;
+    let circle = document.createElementNS(SVGNS, 'circle');
+    circle.setAttribute('cx', rx);
+    circle.setAttribute('cy', ry);
+    circle.setAttribute('r', '5px');
+    circle.style.strokeWidth = '0px';
+    circle.style.fill = '#000';
+    //drawPoint(0, 0);
+    mainsvg.appendChild(circle);
 }
