@@ -4,6 +4,7 @@ const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 const FIELD_RADIUS = 200;
 const ACCURACY = 1000 * 1000 * 1000;
+const PERPENDICULAR_SHIFT = .001;
 
 
 let color = 0;
@@ -229,6 +230,12 @@ function drawAPathSegment(x, y, angle) {
 
     let newAngle = Math.PI - ((angle - Math.PI - 2*segmentAngle) % (2*Math.PI));
 
+    let angleDelta = (angle + newAngle) % Math.PI;
+
+    if (Math.round((angleDelta)*ACCURACY) == 0) {
+        newAngle += PERPENDICULAR_SHIFT;
+    }
+
     return [closestIntersection[0], closestIntersection[1], newAngle];
 }
 
@@ -249,7 +256,7 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
     path = document.createElementNS(SVGNS, 'path');
     path.style.stroke = strokeColor;
     path.style.strokeWidth = strokeWidth;
-    path.style.fill = 'none';
+    path.style.fill = COLORS[color];
     pathes.push('patch');
     svg.appendChild(path);
     let x = startX;
@@ -278,9 +285,7 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
                 path.setAttribute('d', path.getAttribute('d')+`L${x+CANVAS_WIDTH/2} ${CANVAS_HEIGHT/2-y} `);
                 // angle = newSegment[2] % (2*Math.PI);
                 
-                color++;
-                console.log(color);
-                console.log(COLORS[color]);
+                color = (color + 1) % COLORS.length;
                 drawPath(svg, quantityOfSegments-i, x, y, angle, COLORS[color], strokeWidth);
 
                 return;
@@ -304,7 +309,7 @@ let currentNumber = 0;
 
 
 drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
-drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
+drawPath(document.getElementById('mainsvg'), 15, 0, 0, currentNumber, '#f00', '1px');
 
 window.onkeydown = function(e) {
     color = 0;
@@ -313,7 +318,7 @@ window.onkeydown = function(e) {
     // this.console.log(currentNumber);
     mainsvg.innerHTML = '';
     drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
-    drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
+    drawPath(document.getElementById('mainsvg'), 15, 0, 0, currentNumber, '#f00', '1px');
 }
 
 
