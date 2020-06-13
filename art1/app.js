@@ -4,11 +4,12 @@ const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 const FIELD_RADIUS = 200;
 const ACCURACY = 1000 * 1000 * 1000;
-const PERPENDICULAR_SHIFT = .001;
+const PERPENDICULAR_SHIFT = .0001;
+const HIDDEN_FIELD_RADIUS_LESS = 1;
 
 
 let color = 0;
-const COLORS = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff', '#0ff'];
+const COLORS = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
 
 
 /** @type {Array<LineSegment>} */
@@ -152,7 +153,7 @@ class LineSegment {
  */
 function drawHiddenField(quantityOfSides) {
     let shiftAngle = Math.PI / quantityOfSides;
-    let radius = FIELD_RADIUS / Math.cos(shiftAngle);
+    let radius = FIELD_RADIUS / Math.cos(shiftAngle) - HIDDEN_FIELD_RADIUS_LESS;
     let prevXCoord = radius*Math.cos(shiftAngle);
     let prevYCoord = radius*Math.sin(shiftAngle);
     for (let i = 1; i < quantityOfSides; i-=-1) {
@@ -233,6 +234,7 @@ function drawAPathSegment(x, y, angle) {
     let angleDelta = (angle + newAngle) % Math.PI;
 
     if (Math.round((angleDelta)*ACCURACY) == 0) {
+        console.log('dddddd');
         newAngle += PERPENDICULAR_SHIFT;
     }
 
@@ -308,8 +310,8 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
 let currentNumber = 0;
 
 
-drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
-drawPath(document.getElementById('mainsvg'), 15, 0, 0, currentNumber, '#f00', '1px');
+drawField(document.getElementById('mainsvg'), 5, '#000', '5px');
+drawPath(document.getElementById('mainsvg'), 30, 0, 0, currentNumber, '#f00', '1px');
 
 window.onkeydown = function(e) {
     color = 0;
@@ -317,8 +319,8 @@ window.onkeydown = function(e) {
     else currentNumber += 2*Math.PI/360 / 3;
     // this.console.log(currentNumber);
     mainsvg.innerHTML = '';
-    drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
-    drawPath(document.getElementById('mainsvg'), 15, 0, 0, currentNumber, '#f00', '1px');
+    drawField(document.getElementById('mainsvg'), 5, '#000', '5px');
+    drawPath(document.getElementById('mainsvg'), 30, 0, 0, currentNumber, '#f00', '1px');
 }
 
 
