@@ -4,12 +4,14 @@ const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 const FIELD_RADIUS = 200;
 const ACCURACY = 1000 * 1000 * 1000;
-const PERPENDICULAR_SHIFT = .0001;
+const PERPENDICULAR_SHIFT = .01;
 const HIDDEN_FIELD_RADIUS_LESS = 1;
+const QUANTITY_OF_SIDES = 13;
+const QUANTITY_OF_RAYS = 50;
 
 
 let color = 0;
-const COLORS = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+const COLORS = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f', '#fff'];
 
 
 /** @type {Array<LineSegment>} */
@@ -234,7 +236,6 @@ function drawAPathSegment(x, y, angle) {
     let angleDelta = (angle + newAngle) % Math.PI;
 
     if (Math.round((angleDelta)*ACCURACY) == 0) {
-        console.log('dddddd');
         newAngle += PERPENDICULAR_SHIFT;
     }
 
@@ -272,20 +273,13 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
 
         for(let ci = 0; ci < currentSegments.length-1; ci-=-1) {
             let intersection = line.getCoordsOfIntersection(currentSegments[ci]);
-            // console.log(currentSegments.length);
             if (intersection !== false) {
-                // console.log(intersection);
-                for (let j = 0; j < currentSegments.length; j-=-1) {
-                    // currentSegments[j].draw(mainsvg, '#00f', '1px');
-                }
-                // console.log(currentSegments);
                 line = new LineSegment(x, y, intersection[0], intersection[1]);
                 currentSegments.push(line);
                 figureSegments.push(line);
                 x = intersection[0];
                 y = intersection[1];
                 path.setAttribute('d', path.getAttribute('d')+`L${x+CANVAS_WIDTH/2} ${CANVAS_HEIGHT/2-y} `);
-                // angle = newSegment[2] % (2*Math.PI);
                 
                 color = (color + 1) % COLORS.length;
                 drawPath(svg, quantityOfSegments-i, x, y, angle, COLORS[color], strokeWidth);
@@ -307,23 +301,6 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
 
 
 
-let currentNumber = 0;
-
-
-drawField(document.getElementById('mainsvg'), 5, '#000', '5px');
-drawPath(document.getElementById('mainsvg'), 30, 0, 0, currentNumber, '#f00', '1px');
-
-window.onkeydown = function(e) {
-    color = 0;
-    if (e.key == 'ArrowLeft') currentNumber -= 2*Math.PI/360 / 3;
-    else currentNumber += 2*Math.PI/360 / 3;
-    // this.console.log(currentNumber);
-    mainsvg.innerHTML = '';
-    drawField(document.getElementById('mainsvg'), 5, '#000', '5px');
-    drawPath(document.getElementById('mainsvg'), 30, 0, 0, currentNumber, '#f00', '1px');
-}
-
-
 function drawPoint(x, y) {
     let rx = x+CANVAS_WIDTH/2;
     let ry = CANVAS_HEIGHT/2-y;
@@ -333,6 +310,5 @@ function drawPoint(x, y) {
     circle.setAttribute('r', '5px');
     circle.style.strokeWidth = '0px';
     circle.style.fill = '#000';
-    //drawPoint(0, 0);
     mainsvg.appendChild(circle);
 }
