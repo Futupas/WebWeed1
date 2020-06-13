@@ -94,9 +94,6 @@ class LineSegment {
         let intersectionX;
         let intersectionY;
 
-        // console.log(`A1: ${A1}, B1: ${B1}, C1: ${C1}, k1: ${k1}, b1: ${b1}`);
-        // console.log(`A2: ${A2}, B2: ${B2}, C2: ${C2}, k2: ${k2}, b2: ${b2}`);
-
         if (!vertical1 && !vertical2) {
             intersectionX = (b2 - b1) / (k1 - k2);
             intersectionY = k1 * intersectionX + b1;
@@ -144,7 +141,6 @@ function drawHiddenField(quantityOfSides) {
     let radius = FIELD_RADIUS / Math.cos(shiftAngle);
     let prevXCoord = radius*Math.cos(shiftAngle);
     let prevYCoord = radius*Math.sin(shiftAngle);
-    // fieldSegments = [];
     for (let i = 1; i < quantityOfSides; i-=-1) {
         let angle = shiftAngle + 2*Math.PI/quantityOfSides*i;
         let xCoord = radius*Math.cos(angle);
@@ -153,11 +149,9 @@ function drawHiddenField(quantityOfSides) {
         prevXCoord = xCoord;
         prevYCoord = yCoord;
         fieldSegments.push(line);
-        // line.draw(mainsvg, '#00f', '3px');
     }
     let line = new LineSegment(prevXCoord, prevYCoord, radius*Math.cos(shiftAngle), radius*Math.sin(shiftAngle));
     fieldSegments.push(line);
-    // line.draw(mainsvg, '#00f', '3px');
 
 }
 
@@ -201,7 +195,6 @@ function drawAPathSegment(x, y, angle) {
     let closestIntersection = false;
     let fieldIntersects = false;
     let ray = new LineSegment(x, y, x+3*FIELD_RADIUS*Math.cos(angle), y+3*FIELD_RADIUS*Math.sin(angle));
-    // ray.draw(document.getElementById('mainsvg'), '#0f0', '1px');
     raySegments.push(ray);
     for (let i = 0; i < fieldSegments.length; i-=-1) {
         let intersection = fieldSegments[i].getCoordsOfIntersection(ray);
@@ -253,51 +246,17 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
 }
 
 
-let currentNumber = 3;
+let currentNumber = 0;
 
 
-drawField(document.getElementById('mainsvg'), currentNumber, '#000', '5px');
-drawPath(document.getElementById('mainsvg'), 100, 0, 0, .3, '#f00', '1px');
+drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
+drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
 
 window.onkeydown = function(e) {
-    if (e.key == 'ArrowLeft') currentNumber --;
-    else currentNumber -=- 1;
+    if (e.key == 'ArrowLeft') currentNumber -= 2*Math.PI/360 / 3;
+    else currentNumber += 2*Math.PI/360 / 3;
     this.console.log(currentNumber);
     mainsvg.innerHTML = '';
-    drawField(document.getElementById('mainsvg'), currentNumber, '#000', '5px');
-    drawPath(document.getElementById('mainsvg'), 1000, 0, 0, .1234567876545678909876543, '#f00', '1px');
+    drawField(document.getElementById('mainsvg'), 7, '#000', '5px');
+    drawPath(document.getElementById('mainsvg'), 5, 0, 0, currentNumber, '#f00', '1px');
 }
-
-
-// let line1 = new LineSegment(190.2113032590307, 61.803398874989476, 178.20130483767358, 90.79809994790935);
-// // let line1 = new LineSegment(197.53766811902756, 31.286893008046174, 190.2113032590307, 61.803398874989476);
-// line1.draw(mainsvg, '#000', '5px');
-// let line2 = new LineSegment(0, 0, 570.6339097770921, 185.41019662496845);
-// line2.draw(mainsvg, '#0f0', '1px');
-// console.log(line1.getCoordsOfIntersection(line2));
-
-/*
-x1: 0
-x2: 570.6339097770921
-y1: 0
-y2: 185.41019662496845
-ray
-
-
-
-line 1
-x1: 197.53766811902756
-x2: 190.2113032590307
-y1: 31.286893008046174
-y2: 61.803398874989476
-
-
-line 2
-x1: 190.2113032590307
-x2: 178.20130483767358
-y1: 61.803398874989476
-y2: 90.79809994790935
-
-
-
-*/
