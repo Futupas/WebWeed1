@@ -1,8 +1,8 @@
 'use strict';
 const SVGNS = 'http://www.w3.org/2000/svg';
-const CANVAS_WIDTH = 500;
-const CANVAS_HEIGHT = 500;
-const FIELD_RADIUS = 200;
+let CANVAS_WIDTH = 500;
+let CANVAS_HEIGHT = 500;
+let FIELD_RADIUS = 200;
 const ACCURACY = 1000 * 1000 * 1000;
 const PERPENDICULAR_SHIFT = .01;
 const HIDDEN_FIELD_RADIUS_LESS = 1;
@@ -297,18 +297,14 @@ function drawPath(svg, quantityOfSegments, startX, staryY, startAngle, strokeCol
     } 
 }
 
-
-
-
-
-function drawPoint(x, y) {
-    let rx = x+CANVAS_WIDTH/2;
-    let ry = CANVAS_HEIGHT/2-y;
-    let circle = document.createElementNS(SVGNS, 'circle');
-    circle.setAttribute('cx', rx);
-    circle.setAttribute('cy', ry);
-    circle.setAttribute('r', '5px');
-    circle.style.strokeWidth = '0px';
-    circle.style.fill = '#000';
-    mainsvg.appendChild(circle);
-}
+// function drawPoint(x, y) {
+//     let rx = x+CANVAS_WIDTH/2;
+//     let ry = CANVAS_HEIGHT/2-y;
+//     let circle = document.createElementNS(SVGNS, 'circle');
+//     circle.setAttribute('cx', rx);
+//     circle.setAttribute('cy', ry);
+//     circle.setAttribute('r', '5px');
+//     circle.style.strokeWidth = '0px';
+//     circle.style.fill = '#000';
+//     mainsvg.appendChild(circle);
+// }
