@@ -15,6 +15,7 @@ body{
     transform: translate(-50%, -50%);
     /* width: 500px;
     height: 500px; */
+    background-color: #000;
     z-index: 2;
 }
 #mainsvg path{
@@ -51,25 +52,34 @@ div#main div.border.bottom {
     width: 100%;
 }
 
+
 div#main {
-    position: absolute;
+    position: fixed;
     top: 0px;
     left: 0px;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
+    z-index: 2;
+    
 }
 
 body.vertical div#main {
-
+    /* position: absolute; */
 }
 
 div#about {
     position: absolute;
     top: 100vh;
-    left: 0px;
-    width: 100%;
+    right: 0px;
+    width: 33%;
+    z-index: 1;
+    
+    color: #fff;
 }
 
 body.vertical div#about {
-    
+    left: 0px;
+    width: 100%;
+    background-color: #000;
 }
