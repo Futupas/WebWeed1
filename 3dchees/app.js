@@ -11,22 +11,34 @@ let currentAngleX = 0;
 let angleCoef = .5;
 
 
-
-
 window.onmousemove = function (e) {
     if (e.buttons === 1) {
         currentAngleZ -= e.movementX * angleCoef;
         currentAngleX -= e.movementY * angleCoef;
         field.style.transform = `rotateZ(${currentAngleZ}deg) rotateX(${currentAngleX}deg)`;
-        // if (divmovemouse) divmovemouse.remove();
-        // if (divdoubleclickmouse) divdoubleclickmouse.style.display = 'block';
+        if (document.getElementById('divmovemouse') != null) {
+            document.getElementById('divmovemouse').remove();
+            document.getElementById('divdoubleclickmouse').style.display = 'block';
+        }
     }
 }
 window.ondblclick = function (e) {
     currentAngleZ = 0;
     currentAngleX = 0;
     field.style.transform = `rotateZ(${currentAngleZ}deg) rotateX(${currentAngleX}deg)`;
-    // if (document.getElementById('divmovemouse') === undefined && divdoubleclickmouse) divdoubleclickmouse.remove();
+    if (document.getElementById('divdoubleclickmouse') != null) {
+        document.getElementById('divdoubleclickmouse').remove();
+    }
+}
+
+window.onresize = function (e) {
+    if (document.getElementById('divmovemouse') != null) {
+        document.getElementById('divmovemouse').remove();
+    }
+    if (document.getElementById('divdoubleclickmouse') != null) {
+        document.getElementById('divdoubleclickmouse').remove();
+    }
+    document.getElementById('divresizereload').style.display = 'block';
 }
 
 

@@ -70,8 +70,8 @@ body{
     font-family: Arial;
     font-weight: 800;
     display: none;
-    background-color: #444;
+    background-color: #999;
     color: white;
-    opacity: .5;
+    opacity: .9;
     border-radius: 30px;
 }
