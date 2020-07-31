@@ -1,18 +1,36 @@
 'use strict';
 
-let screenWidth = 1000;
-let screenHeight = 1000;
+let screenWidth = document.documentElement.clientWidth;
+let screenHeight = document.documentElement.clientHeight;
 let perspective = 1000;
-let perspectiveOriginTop = screenHeight / 2; // from top
+let perspectiveOriginTop = 0; // from top
 let perspectiveOriginLeft = screenWidth / 2; // from left
+
+let currentAngleZ = 0;
+let currentAngleX = 0;
+let angleCoef = .5;
+
+
 
 
 window.onmousemove = function (e) {
-    
+    if (e.buttons === 1) {
+        currentAngleZ -= e.movementX * angleCoef;
+        currentAngleX -= e.movementY * angleCoef;
+        field.style.transform = `rotateZ(${currentAngleZ}deg) rotateX(${currentAngleX}deg)`;
+        // if (divmovemouse) divmovemouse.remove();
+        // if (divdoubleclickmouse) divdoubleclickmouse.style.display = 'block';
+    }
+}
+window.ondblclick = function (e) {
+    currentAngleZ = 0;
+    currentAngleX = 0;
+    field.style.transform = `rotateZ(${currentAngleZ}deg) rotateX(${currentAngleX}deg)`;
+    // if (document.getElementById('divmovemouse') === undefined && divdoubleclickmouse) divdoubleclickmouse.remove();
 }
 
 
-buildField(field, 2, 2, [['black', 'yellow'], ['yellow', 'black']]);
+buildField(field, 10, 5, [['red', 'green', 'blue'], ['blue', 'green', 'red'], ['blue', 'red', 'green']]);
 
 
 /**

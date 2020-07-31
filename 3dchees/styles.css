@@ -1,8 +1,12 @@
 *{
     padding: 0px;
     margin: 0px;
-    backface-visibility: hidden;
+    backface-visibility: visible;
     transform-style: preserve-3d;
+    user-select: none;
+}
+body{
+    overflow: hidden;
 }
 
 #container{
@@ -12,61 +16,29 @@
     width: 100vw;
     height: 100vh;
     perspective: 1000px;
-    perspective-origin: center center;
+    perspective-origin: top center;
 }
 
 #floor{
     position: fixed;
-    top: 0px;
+    top: -100vh;
     left: 0px;
     width: 100vw;
-    height: 100vh;
-    background-color: red;
+    height: 200vh;
+    background-color: transparent;
     transform-origin: bottom center;
     transform: rotateX(90deg);
 }
 
 #field{
     position: absolute;
-    width: 50%;
-    height: 50%;
-    top: 25%;
-    left: 25%;
-    background-color: blueviolet;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    background-color: #000;
     transform-origin: center center;
-    transform: rotate(0deg);
-}
-
-#cell{
-    position: absolute;
-    bottom: 200px;
-    left: 200px;
-    width: 200px;
-    height: 200px;
-    background-color: black;
-    transform-origin: bottom center;
-    /* transform: rotateX(-90deg); */
-}
-
-#test{
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 10vw;
-    height: 250px;
-    background-color: green;
-}
-
-#cell2{
-    position: absolute;
-    bottom: 200px;
-    left: 200px;
-    width: 200px;
-    height: 100vh;
-    background-color: blue;
-    opacity: .5;
-    transform-origin: bottom center;
-    transform: rotateX(-90deg);
+    transform: rotateZ(0deg) rotateX(0deg);
 }
 
 .cell {
@@ -84,6 +56,22 @@
     overflow: visible;
 }
 .svg polygon {
-    /* fill: lime; */
+    stroke-width: 7px;
+    stroke: black;
+}
 
+.centertext{
+    position: fixed;
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    font-size: 80px;
+    text-align: center;
+    font-family: Arial;
+    font-weight: 800;
+    display: none;
+    background-color: #444;
+    color: white;
+    opacity: .5;
+    border-radius: 30px;
 }
